@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import AuthForm from '@/components/auth/AuthForm';
@@ -13,12 +12,15 @@ import StudentMessages from '@/components/instructor/StudentMessages';
 import CourseDetails from '@/components/courses/CourseDetails';
 import CourseEnrollment from '@/components/courses/CourseEnrollment';
 import EnrollmentSuccess from '@/components/courses/EnrollmentSuccess';
+import EnrolledCourses from '@/components/student/EnrolledCourses';
+import Certificates from '@/components/student/Certificates';
+import LearningHours from '@/components/student/LearningHours';
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(true);
-  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, catalog, upload, learning, certificate, analytics, messages, course-details, enrollment, enrollment-success
+  const [currentView, setCurrentView] = useState('dashboard');
   const [selectedCourse, setSelectedCourse] = useState(null);
 
   const handleAuth = (userData: any) => {
@@ -63,6 +65,11 @@ const Index = () => {
   const handleContinueLearning = (course: any) => {
     setSelectedCourse(course);
     setCurrentView('learning');
+  };
+
+  // Handle student dashboard navigation
+  const handleStudentNavigation = (view: string) => {
+    setCurrentView(view);
   };
 
   // Show authentication form if user is not logged in
@@ -150,29 +157,35 @@ const Index = () => {
       case 'catalog':
         return user.role === 'student' ? 
           <CourseCatalog onCourseSelect={handleCourseSelect} onCourseEnroll={handleCourseEnroll} /> : 
-          <StudentDashboard onContinueLearning={handleContinueLearning} />;
+          <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
       case 'upload':
-        return user.role === 'instructor' ? <CourseUpload /> : <StudentDashboard onContinueLearning={handleContinueLearning} />;
+        return user.role === 'instructor' ? <CourseUpload /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
       case 'learning':
         return user.role === 'student' ? 
           <LearningInterface course={selectedCourse} /> : 
-          <StudentDashboard onContinueLearning={handleContinueLearning} />;
+          <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
       case 'certificate':
-        return user.role === 'instructor' ? <IssueCertificate /> : <StudentDashboard onContinueLearning={handleContinueLearning} />;
+        return user.role === 'instructor' ? <IssueCertificate /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
       case 'analytics':
-        return user.role === 'instructor' ? <InstructorAnalytics /> : <StudentDashboard onContinueLearning={handleContinueLearning} />;
+        return user.role === 'instructor' ? <InstructorAnalytics /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
       case 'messages':
-        return user.role === 'instructor' ? <StudentMessages /> : <StudentDashboard onContinueLearning={handleContinueLearning} />;
+        return user.role === 'instructor' ? <StudentMessages /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
       case 'course-details':
         return <CourseDetails course={selectedCourse} onEnroll={handleCourseEnroll} onBack={() => setCurrentView('catalog')} />;
       case 'enrollment':
         return <CourseEnrollment course={selectedCourse} onSuccess={handleEnrollmentSuccess} onBack={() => setCurrentView('catalog')} />;
       case 'enrollment-success':
         return <EnrollmentSuccess course={selectedCourse} onContinue={() => setCurrentView('dashboard')} />;
+      case 'enrolled-courses':
+        return <EnrolledCourses onBack={() => setCurrentView('dashboard')} onContinueLearning={handleContinueLearning} />;
+      case 'certificates':
+        return <Certificates onBack={() => setCurrentView('dashboard')} />;
+      case 'learning-hours':
+        return <LearningHours onBack={() => setCurrentView('dashboard')} />;
       default:
         return user.role === 'instructor' ? 
           <InstructorDashboard onQuickAction={handleQuickAction} /> : 
-          <StudentDashboard onContinueLearning={handleContinueLearning} />;
+          <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
     }
   };
 

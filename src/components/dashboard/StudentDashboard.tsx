@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,9 +6,10 @@ import { BookOpen, Clock, Award, TrendingUp, Play, Star } from 'lucide-react';
 
 interface StudentDashboardProps {
   onContinueLearning?: (course: any) => void;
+  onNavigate?: (view: string) => void;
 }
 
-const StudentDashboard = ({ onContinueLearning }: StudentDashboardProps) => {
+const StudentDashboard = ({ onContinueLearning, onNavigate }: StudentDashboardProps) => {
   const recentCourses = [
     { id: 1, title: "Introduction to Machine Learning", progress: 75, totalLessons: 24, completedLessons: 18, instructor: "Dr. Sarah Chen", rating: 4.8 },
     { id: 2, title: "Web Development Fundamentals", progress: 45, totalLessons: 32, completedLessons: 14, instructor: "Mark Johnson", rating: 4.9 },
@@ -26,6 +26,10 @@ const StudentDashboard = ({ onContinueLearning }: StudentDashboardProps) => {
     onContinueLearning?.(course);
   };
 
+  const handleCardClick = (cardType: string) => {
+    onNavigate?.(cardType);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Section */}
@@ -35,7 +39,10 @@ const StudentDashboard = ({ onContinueLearning }: StudentDashboardProps) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
+        <Card 
+          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleCardClick('enrolled-courses')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -47,7 +54,10 @@ const StudentDashboard = ({ onContinueLearning }: StudentDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0">
+        <Card 
+          className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleCardClick('learning-hours')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -59,7 +69,10 @@ const StudentDashboard = ({ onContinueLearning }: StudentDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0">
+        <Card 
+          className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleCardClick('certificates')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
