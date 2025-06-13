@@ -56,7 +56,10 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0">
+        <Card 
+          className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 cursor-pointer hover:from-emerald-600 hover:to-emerald-700 transition-all"
+          onClick={() => onQuickAction?.('revenue-analytics')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -69,7 +72,10 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
+        <Card 
+          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all"
+          onClick={() => onQuickAction?.('student-management')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -82,7 +88,10 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0">
+        <Card 
+          className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 cursor-pointer hover:from-purple-600 hover:to-purple-700 transition-all"
+          onClick={() => onQuickAction?.('course-management')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>

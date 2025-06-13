@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import AuthForm from '@/components/auth/AuthForm';
@@ -9,6 +10,9 @@ import LearningInterface from '@/components/learning/LearningInterface';
 import IssueCertificate from '@/components/instructor/IssueCertificate';
 import InstructorAnalytics from '@/components/instructor/InstructorAnalytics';
 import StudentMessages from '@/components/instructor/StudentMessages';
+import RevenueAnalytics from '@/components/instructor/RevenueAnalytics';
+import StudentManagement from '@/components/instructor/StudentManagement';
+import CourseManagement from '@/components/instructor/CourseManagement';
 import CourseDetails from '@/components/courses/CourseDetails';
 import CourseEnrollment from '@/components/courses/CourseEnrollment';
 import EnrollmentSuccess from '@/components/courses/EnrollmentSuccess';
@@ -170,6 +174,12 @@ const Index = () => {
         return user.role === 'instructor' ? <InstructorAnalytics /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
       case 'messages':
         return user.role === 'instructor' ? <StudentMessages /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
+      case 'revenue-analytics':
+        return user.role === 'instructor' ? <RevenueAnalytics onBack={() => setCurrentView('dashboard')} /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
+      case 'student-management':
+        return user.role === 'instructor' ? <StudentManagement onBack={() => setCurrentView('dashboard')} /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
+      case 'course-management':
+        return user.role === 'instructor' ? <CourseManagement onBack={() => setCurrentView('dashboard')} /> : <StudentDashboard onContinueLearning={handleContinueLearning} onNavigate={handleStudentNavigation} />;
       case 'course-details':
         return <CourseDetails course={selectedCourse} onEnroll={handleCourseEnroll} onBack={() => setCurrentView('catalog')} />;
       case 'enrollment':
