@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,24 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
   const totalRevenue = courses.reduce((sum, course) => sum + course.revenue, 0);
   const totalStudents = courses.reduce((sum, course) => sum + course.students, 0);
 
+  const handleCourseView = (course: any) => {
+    console.log('Viewing course:', course);
+    // You can add more functionality here later
+    alert(`Viewing course: ${course.title}`);
+  };
+
+  const handleCourseEdit = (course: any) => {
+    console.log('Editing course:', course);
+    // You can add more functionality here later
+    alert(`Editing course: ${course.title}`);
+  };
+
+  const handleCourseAnalytics = (course: any) => {
+    console.log('Viewing analytics for course:', course);
+    // You can add more functionality here later
+    alert(`Analytics for: ${course.title}\nStudents: ${course.students}\nRevenue: $${course.revenue}\nRating: ${course.rating}`);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Section */}
@@ -36,7 +55,6 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
         </Button>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0">
           <CardContent className="p-6">
@@ -135,13 +153,28 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleCourseView(course)}
+                      title="View Course"
+                    >
                       <Eye className="w-4 h-4" />
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleCourseEdit(course)}
+                      title="Edit Course"
+                    >
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleCourseAnalytics(course)}
+                      title="View Analytics"
+                    >
                       <BarChart3 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -153,7 +186,6 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
 
         {/* Quick Actions & Analytics */}
         <div className="space-y-6">
-          {/* Quick Actions */}
           <Card className="shadow-lg border-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -188,7 +220,6 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
             </CardContent>
           </Card>
 
-          {/* Recent Activity */}
           <Card className="shadow-lg border-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

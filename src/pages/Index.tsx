@@ -10,12 +10,16 @@ import LearningInterface from '@/components/learning/LearningInterface';
 import IssueCertificate from '@/components/instructor/IssueCertificate';
 import InstructorAnalytics from '@/components/instructor/InstructorAnalytics';
 import StudentMessages from '@/components/instructor/StudentMessages';
+import CourseDetails from '@/components/courses/CourseDetails';
+import CourseEnrollment from '@/components/courses/CourseEnrollment';
+import EnrollmentSuccess from '@/components/courses/EnrollmentSuccess';
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(true);
-  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, catalog, upload, learning, certificate, analytics, messages
+  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, catalog, upload, learning, certificate, analytics, messages, course-details, enrollment, enrollment-success
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   const handleAuth = (userData: any) => {
     console.log('User authenticated:', userData);
@@ -30,11 +34,35 @@ const Index = () => {
   const handleLogout = () => {
     setUser(null);
     setCurrentView('dashboard');
+    setSelectedCourse(null);
   };
 
   // Handle navigation from quick actions
   const handleQuickAction = (action: string) => {
     setCurrentView(action);
+  };
+
+  // Handle course selection for details view
+  const handleCourseSelect = (course: any) => {
+    setSelectedCourse(course);
+    setCurrentView('course-details');
+  };
+
+  // Handle course enrollment
+  const handleCourseEnroll = (course: any) => {
+    setSelectedCourse(course);
+    setCurrentView('enrollment');
+  };
+
+  // Handle successful enrollment
+  const handleEnrollmentSuccess = () => {
+    setCurrentView('enrollment-success');
+  };
+
+  // Handle continue learning (navigate to learning interface with selected course)
+  const handleContinueLearning = (course: any) => {
+    setSelectedCourse(course);
+    setCurrentView('learning');
   };
 
   // Show authentication form if user is not logged in
@@ -120,21 +148,31 @@ const Index = () => {
   const renderCurrentView = () => {
     switch (currentView) {
       case 'catalog':
-        return user.role === 'student' ? <CourseCatalog /> : <StudentDashboard />;
+        return user.role === 'student' ? 
+          <CourseCatalog onCourseSelect={handleCourseSelect} onCourseEnroll={handleCourseEnroll} /> : 
+          <StudentDashboard onContinueLearning={handleContinueLearning} />;
       case 'upload':
-        return user.role === 'instructor' ? <CourseUpload /> : <StudentDashboard />;
+        return user.role === 'instructor' ? <CourseUpload /> : <StudentDashboard onContinueLearning={handleContinueLearning} />;
       case 'learning':
-        return user.role === 'student' ? <LearningInterface /> : <StudentDashboard />;
+        return user.role === 'student' ? 
+          <LearningInterface course={selectedCourse} /> : 
+          <StudentDashboard onContinueLearning={handleContinueLearning} />;
       case 'certificate':
-        return user.role === 'instructor' ? <IssueCertificate /> : <StudentDashboard />;
+        return user.role === 'instructor' ? <IssueCertificate /> : <StudentDashboard onContinueLearning={handleContinueLearning} />;
       case 'analytics':
-        return user.role === 'instructor' ? <InstructorAnalytics /> : <StudentDashboard />;
+        return user.role === 'instructor' ? <InstructorAnalytics /> : <StudentDashboard onContinueLearning={handleContinueLearning} />;
       case 'messages':
-        return user.role === 'instructor' ? <StudentMessages /> : <StudentDashboard />;
+        return user.role === 'instructor' ? <StudentMessages /> : <StudentDashboard onContinueLearning={handleContinueLearning} />;
+      case 'course-details':
+        return <CourseDetails course={selectedCourse} onEnroll={handleCourseEnroll} onBack={() => setCurrentView('catalog')} />;
+      case 'enrollment':
+        return <CourseEnrollment course={selectedCourse} onSuccess={handleEnrollmentSuccess} onBack={() => setCurrentView('catalog')} />;
+      case 'enrollment-success':
+        return <EnrollmentSuccess course={selectedCourse} onContinue={() => setCurrentView('dashboard')} />;
       default:
         return user.role === 'instructor' ? 
           <InstructorDashboard onQuickAction={handleQuickAction} /> : 
-          <StudentDashboard />;
+          <StudentDashboard onContinueLearning={handleContinueLearning} />;
     }
   };
 

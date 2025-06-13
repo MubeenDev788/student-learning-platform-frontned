@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Star, Clock, Users, Play, BookOpen } from 'lucide-react';
 
-const CourseCatalog = () => {
+interface CourseCatalogProps {
+  onCourseSelect?: (course: any) => void;
+  onCourseEnroll?: (course: any) => void;
+}
+
+const CourseCatalog = ({ onCourseSelect, onCourseEnroll }: CourseCatalogProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
@@ -115,6 +119,15 @@ const CourseCatalog = () => {
     return matchesSearch && matchesSubject && matchesDifficulty && matchesPrice;
   });
 
+  const handleCourseClick = (course: any) => {
+    onCourseSelect?.(course);
+  };
+
+  const handleEnrollClick = (e: React.MouseEvent, course: any) => {
+    e.stopPropagation(); // Prevent course details from opening
+    onCourseEnroll?.(course);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
@@ -194,7 +207,11 @@ const CourseCatalog = () => {
       {/* Course Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCourses.map((course) => (
-          <Card key={course.id} className="shadow-lg border-0 hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <Card 
+            key={course.id} 
+            className="shadow-lg border-0 hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer"
+            onClick={() => handleCourseClick(course)}
+          >
             {/* Course Thumbnail */}
             <div className="h-48 bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 flex items-center justify-center">
               <span className="text-6xl">{course.thumbnail}</span>
@@ -252,7 +269,10 @@ const CourseCatalog = () => {
                     <span className="text-2xl font-bold text-gray-900">${course.price}</span>
                   )}
                 </div>
-                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
+                <Button 
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                  onClick={(e) => handleEnrollClick(e, course)}
+                >
                   <Play className="w-4 h-4 mr-2" />
                   Enroll Now
                 </Button>

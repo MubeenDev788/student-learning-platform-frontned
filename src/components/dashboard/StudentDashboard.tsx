@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { BookOpen, Clock, Award, TrendingUp, Play, Star } from 'lucide-react';
 
-const StudentDashboard = () => {
+interface StudentDashboardProps {
+  onContinueLearning?: (course: any) => void;
+}
+
+const StudentDashboard = ({ onContinueLearning }: StudentDashboardProps) => {
   const recentCourses = [
     { id: 1, title: "Introduction to Machine Learning", progress: 75, totalLessons: 24, completedLessons: 18, instructor: "Dr. Sarah Chen", rating: 4.8 },
     { id: 2, title: "Web Development Fundamentals", progress: 45, totalLessons: 32, completedLessons: 14, instructor: "Mark Johnson", rating: 4.9 },
@@ -18,6 +22,10 @@ const StudentDashboard = () => {
     { id: 6, title: "Cloud Computing Basics", difficulty: "Beginner", duration: "6 weeks", price: "$79", rating: 4.5 }
   ];
 
+  const handleContinueLearning = (course: any) => {
+    onContinueLearning?.(course);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Section */}
@@ -26,7 +34,6 @@ const StudentDashboard = () => {
         <p className="text-gray-600">Continue your learning journey and discover new opportunities.</p>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
           <CardContent className="p-6">
@@ -111,7 +118,10 @@ const StudentDashboard = () => {
                       <span className="text-sm font-medium text-gray-900">{course.progress}%</span>
                     </div>
                   </div>
-                  <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
+                  <Button 
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                    onClick={() => handleContinueLearning(course)}
+                  >
                     Continue
                   </Button>
                 </div>
