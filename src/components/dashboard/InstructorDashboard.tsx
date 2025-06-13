@@ -1,11 +1,14 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DollarSign, Users, BookOpen, TrendingUp, Plus, Eye, Edit, BarChart3 } from 'lucide-react';
 
-const InstructorDashboard = () => {
+interface InstructorDashboardProps {
+  onQuickAction?: (action: string) => void;
+}
+
+const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
   const courses = [
     { id: 1, title: "Advanced JavaScript Concepts", students: 1247, revenue: 2494, rating: 4.8, status: "Published" },
     { id: 2, title: "React Hook Mastery", students: 892, revenue: 1784, rating: 4.9, status: "Published" },
@@ -24,7 +27,10 @@ const InstructorDashboard = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Instructor Dashboard</h1>
           <p className="text-gray-600">Manage your courses and track your success.</p>
         </div>
-        <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
+        <Button 
+          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+          onClick={() => onQuickAction?.('upload')}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Create New Course
         </Button>
@@ -156,15 +162,26 @@ const InstructorDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full justify-start bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
+              <Button 
+                className="w-full justify-start bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                onClick={() => onQuickAction?.('upload')}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create New Course
               </Button>
-              <Button variant="outline" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => onQuickAction?.('analytics')}
+              >
                 <BarChart3 className="w-4 h-4 mr-2" />
                 View Analytics
               </Button>
-              <Button variant="outline" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => onQuickAction?.('messages')}
+              >
                 <Users className="w-4 h-4 mr-2" />
                 Student Messages
               </Button>

@@ -7,12 +7,15 @@ import InstructorDashboard from '@/components/dashboard/InstructorDashboard';
 import CourseCatalog from '@/components/courses/CourseCatalog';
 import CourseUpload from '@/components/courses/CourseUpload';
 import LearningInterface from '@/components/learning/LearningInterface';
+import IssueCertificate from '@/components/instructor/IssueCertificate';
+import InstructorAnalytics from '@/components/instructor/InstructorAnalytics';
+import StudentMessages from '@/components/instructor/StudentMessages';
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(true);
-  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, catalog, upload, learning
+  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, catalog, upload, learning, certificate, analytics, messages
 
   const handleAuth = (userData: any) => {
     console.log('User authenticated:', userData);
@@ -27,6 +30,11 @@ const Index = () => {
   const handleLogout = () => {
     setUser(null);
     setCurrentView('dashboard');
+  };
+
+  // Handle navigation from quick actions
+  const handleQuickAction = (action: string) => {
+    setCurrentView(action);
   };
 
   // Show authentication form if user is not logged in
@@ -63,29 +71,46 @@ const Index = () => {
           >
             Dashboard
           </Button>
-          <Button
-            variant={currentView === 'catalog' ? 'default' : 'ghost'}
-            onClick={() => setCurrentView('catalog')}
-            className={currentView === 'catalog' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' : ''}
-          >
-            Course Catalog
-          </Button>
-          {user.role === 'instructor' && (
-            <Button
-              variant={currentView === 'upload' ? 'default' : 'ghost'}
-              onClick={() => setCurrentView('upload')}
-              className={currentView === 'upload' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' : ''}
-            >
-              Upload Course
-            </Button>
+          
+          {/* Student-only navigation */}
+          {user.role === 'student' && (
+            <>
+              <Button
+                variant={currentView === 'catalog' ? 'default' : 'ghost'}
+                onClick={() => setCurrentView('catalog')}
+                className={currentView === 'catalog' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' : ''}
+              >
+                Course Catalog
+              </Button>
+              <Button
+                variant={currentView === 'learning' ? 'default' : 'ghost'}
+                onClick={() => setCurrentView('learning')}
+                className={currentView === 'learning' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' : ''}
+              >
+                Learning Interface
+              </Button>
+            </>
           )}
-          <Button
-            variant={currentView === 'learning' ? 'default' : 'ghost'}
-            onClick={() => setCurrentView('learning')}
-            className={currentView === 'learning' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' : ''}
-          >
-            Learning Interface
-          </Button>
+
+          {/* Instructor-only navigation */}
+          {user.role === 'instructor' && (
+            <>
+              <Button
+                variant={currentView === 'upload' ? 'default' : 'ghost'}
+                onClick={() => setCurrentView('upload')}
+                className={currentView === 'upload' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' : ''}
+              >
+                Upload Course
+              </Button>
+              <Button
+                variant={currentView === 'certificate' ? 'default' : 'ghost'}
+                onClick={() => setCurrentView('certificate')}
+                className={currentView === 'certificate' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' : ''}
+              >
+                Issue Certificate
+              </Button>
+            </>
+          )}
         </nav>
       </div>
     </div>
@@ -95,13 +120,21 @@ const Index = () => {
   const renderCurrentView = () => {
     switch (currentView) {
       case 'catalog':
-        return <CourseCatalog />;
+        return user.role === 'student' ? <CourseCatalog /> : <StudentDashboard />;
       case 'upload':
         return user.role === 'instructor' ? <CourseUpload /> : <StudentDashboard />;
       case 'learning':
-        return <LearningInterface />;
+        return user.role === 'student' ? <LearningInterface /> : <StudentDashboard />;
+      case 'certificate':
+        return user.role === 'instructor' ? <IssueCertificate /> : <StudentDashboard />;
+      case 'analytics':
+        return user.role === 'instructor' ? <InstructorAnalytics /> : <StudentDashboard />;
+      case 'messages':
+        return user.role === 'instructor' ? <StudentMessages /> : <StudentDashboard />;
       default:
-        return user.role === 'instructor' ? <InstructorDashboard /> : <StudentDashboard />;
+        return user.role === 'instructor' ? 
+          <InstructorDashboard onQuickAction={handleQuickAction} /> : 
+          <StudentDashboard />;
     }
   };
 
