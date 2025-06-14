@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DollarSign, Users, BookOpen, TrendingUp, Plus, Eye, Edit, BarChart3, Delete } from 'lucide-react';
 import CourseDeleteModal from "@/components/instructor/CourseDeleteModal";
-import CourseEditForm from "@/components/instructor/CourseEditForm";
+import CourseEditModal from "@/components/instructor/CourseEditModal";
 import CourseAnalyticsModal from "@/components/instructor/CourseAnalyticsModal";
 
 interface InstructorDashboardProps {
@@ -24,10 +24,9 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
 
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
-  const [editCourseId, setEditCourseId] = React.useState<number | null>(null);
+  const [editCourse, setEditCourse] = React.useState<any | null>(null);
   const [analyticsCourse, setAnalyticsCourse] = React.useState<any | null>(null);
   const [courseToDelete, setCourseToDelete] = React.useState<any | null>(null);
-  // We'll manage course updates locally for demo; in production, it should make API requests.
   const [courseList, setCourseList] = React.useState(courses);
 
   const handleDeleteRequest = (course: any) => {
@@ -43,12 +42,12 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
     setConfirmDeleteOpen(false);
     setCourseToDelete(null);
   };
-  const handleEdit = (courseId: number) => {
-    setEditCourseId(courseId);
+  const handleEdit = (course: any) => {
+    setEditCourse(course);
   };
   const handleUpdateCourse = (updatedCourse: any) => {
     setCourseList(courseList.map(c => c.id === updatedCourse.id ? updatedCourse : c));
-    setEditCourseId(null);
+    setEditCourse(null);
   };
   const handleShowAnalytics = (course: any) => {
     setAnalyticsCourse(course);
@@ -191,7 +190,7 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
                       size="sm"
                       variant="outline"
                       aria-label="Edit"
-                      onClick={() => handleEdit(course.id)}
+                      onClick={() => handleEdit(course)}
                       title="Edit Course"
                     >
                       <Edit className="w-4 h-4" />
@@ -208,14 +207,6 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
                   </div>
                 </div>
               ))}
-              {/* Inline Edit Form */}
-              {editCourseId && (
-                <CourseEditForm
-                  course={courseList.find((c) => c.id === editCourseId)}
-                  onCancel={() => setEditCourseId(null)}
-                  onSave={handleUpdateCourse}
-                />
-              )}
             </CardContent>
           </Card>
         </div>
@@ -295,6 +286,12 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
         onCancel={() => { setDeleteModalOpen(false); setCourseToDelete(null); }}
         onCancelFinal={() => { setConfirmDeleteOpen(false); setCourseToDelete(null); }}
         course={courseToDelete}
+      />
+      <CourseEditModal
+        open={!!editCourse}
+        onClose={() => setEditCourse(null)}
+        course={editCourse}
+        onSave={handleUpdateCourse}
       />
       <CourseAnalyticsModal
         open={!!analyticsCourse}
