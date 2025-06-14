@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Search, Bell, User, LogOut } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User } from "lucide-react";
+// Removed duplicate import of User icon
+// import { User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
@@ -88,3 +90,4 @@ const Header = ({ user, onLogout, onSearch }: HeaderProps) => {
 };
 
 export default Header;
+
