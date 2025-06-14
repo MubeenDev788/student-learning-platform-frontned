@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,14 +27,8 @@ const IssueCertificate = () => {
   const handleGenerateCertificate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsGenerating(true);
-    
-    // Simulate certificate generation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    console.log('Certificate data:', certificateData);
+    await new Promise(resolve => setTimeout(resolve, 1700));
     setIsGenerating(false);
-    
-    // Show success message
     alert('Certificate generated successfully!');
   };
 
@@ -44,169 +38,143 @@ const IssueCertificate = () => {
     "Node.js Backend Development",
     "TypeScript Fundamentals"
   ];
-
   const grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "Pass"];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-          <Award className="w-8 h-8 text-orange-500" />
-          Issue Certificate
-        </h1>
-        <p className="text-gray-600">Generate completion certificates for your students</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Certificate Form */}
-        <Card className="shadow-lg border-0">
+    <div className="max-w-3xl mx-auto px-4 py-10 flex flex-col items-center">
+      <div className="flex flex-col md:flex-row w-full gap-8">
+        {/* Form Section */}
+        <Card className="flex-1 bg-white border shadow-lg">
           <CardHeader>
-            <CardTitle>Certificate Details</CardTitle>
-            <CardDescription>Fill in the student and course information</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="w-6 h-6 text-orange-500" />
+              Issue Certificate
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleGenerateCertificate} className="space-y-4">
-              <div>
-                <Label htmlFor="studentName">Student Name</Label>
-                <Input
-                  id="studentName"
-                  type="text"
-                  placeholder="Enter student's full name"
-                  value={certificateData.studentName}
-                  onChange={(e) => handleInputChange('studentName', e.target.value)}
-                  className="mt-1"
-                  required
-                />
+            <form onSubmit={handleGenerateCertificate} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <Label htmlFor="studentName">Student Name</Label>
+                  <Input
+                    id="studentName"
+                    value={certificateData.studentName}
+                    onChange={e => handleInputChange("studentName", e.target.value)}
+                    placeholder="Full name"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="studentEmail">Student Email</Label>
+                  <Input
+                    id="studentEmail"
+                    type="email"
+                    value={certificateData.studentEmail}
+                    onChange={e => handleInputChange("studentEmail", e.target.value)}
+                    placeholder="student@email.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="courseName">Course Name</Label>
+                  <Select
+                    value={certificateData.courseName}
+                    onValueChange={value => handleInputChange("courseName", value)}
+                    required
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select course" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {courses.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="completionDate">Completion Date</Label>
+                  <Input
+                    id="completionDate"
+                    type="date"
+                    value={certificateData.completionDate}
+                    onChange={e => handleInputChange("completionDate", e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="grade">Grade</Label>
+                  <Select
+                    value={certificateData.grade}
+                    onValueChange={value => handleInputChange("grade", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select grade (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {grades.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="additionalNotes">Additional Notes</Label>
+                  <Textarea
+                    id="additionalNotes"
+                    value={certificateData.additionalNotes}
+                    onChange={e => handleInputChange("additionalNotes", e.target.value)}
+                    placeholder="e.g. Honors, participation etc. (optional)"
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="studentEmail">Student Email</Label>
-                <Input
-                  id="studentEmail"
-                  type="email"
-                  placeholder="student@example.com"
-                  value={certificateData.studentEmail}
-                  onChange={(e) => handleInputChange('studentEmail', e.target.value)}
-                  className="mt-1"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="courseName">Course Name</Label>
-                <Select onValueChange={(value) => handleInputChange('courseName', value)} required>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {courses.map(course => (
-                      <SelectItem key={course} value={course}>{course}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="completionDate">Completion Date</Label>
-                <Input
-                  id="completionDate"
-                  type="date"
-                  value={certificateData.completionDate}
-                  onChange={(e) => handleInputChange('completionDate', e.target.value)}
-                  className="mt-1"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="grade">Grade (Optional)</Label>
-                <Select onValueChange={(value) => handleInputChange('grade', value)}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select grade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {grades.map(grade => (
-                      <SelectItem key={grade} value={grade}>{grade}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="additionalNotes">Additional Notes (Optional)</Label>
-                <Textarea
-                  id="additionalNotes"
-                  placeholder="Add any special achievements or notes..."
-                  value={certificateData.additionalNotes}
-                  onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <Button 
-                  type="submit" 
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+              <div className="flex gap-3 pt-6 justify-end">
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
                   disabled={isGenerating}
                 >
-                  {isGenerating ? (
-                    <>
-                      <Award className="w-4 h-4 mr-2 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Generate & Send
-                    </>
-                  )}
+                  <Send className={`w-4 h-4 mr-2 ${isGenerating ? "animate-spin" : ""}`} />
+                  {isGenerating ? "Generating..." : "Generate & Send"}
                 </Button>
-                
-                <Button type="button" variant="outline">
+                <Button variant="outline" type="button">
                   <Download className="w-4 h-4 mr-2" />
-                  Download
+                  Download PDF
                 </Button>
               </div>
             </form>
           </CardContent>
         </Card>
-
-        {/* Certificate Preview */}
-        <Card className="shadow-lg border-0">
+        {/* Preview Section */}
+        <Card className="flex-1 border-2 border-dashed border-gray-300 bg-gradient-to-br from-white to-blue-50 shadow-md min-h-[480px] flex flex-col justify-center items-center">
           <CardHeader>
-            <CardTitle>Certificate Preview</CardTitle>
-            <CardDescription>Preview of the generated certificate</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="w-6 h-6 text-orange-500" />
+              Certificate Preview
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center min-h-[400px] flex flex-col justify-center">
-              <div className="mb-6">
-                <Award className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">Certificate of Completion</h2>
+            <div className="p-6 rounded-lg text-center flex flex-col items-center gap-3">
+              <h2 className="text-xl font-bold text-gray-800">Certificate of Completion</h2>
+              <span className="text-lg text-gray-700">Awarded to</span>
+              <span className="text-2xl font-semibold text-blue-600">{certificateData.studentName || "[Student Name]"}</span>
+              <span className="text-lg text-gray-700">for successfully completing</span>
+              <span className="text-lg font-semibold text-purple-700">{certificateData.courseName || "[Course Name]"}</span>
+              {certificateData.grade && (
+                <span className="text-md text-gray-800">with grade <span className="font-bold text-emerald-600">{certificateData.grade}</span></span>
+              )}
+              <div>
+                <span className="text-xs text-gray-500">
+                  Email: {certificateData.studentEmail || "[Student Email]"}
+                </span>
               </div>
-              
-              <div className="space-y-4 text-gray-600">
-                <p className="text-lg">This is to certify that</p>
-                <p className="text-2xl font-bold text-gray-800">
-                  {certificateData.studentName || '[Student Name]'}
-                </p>
-                <p className="text-lg">has successfully completed the course</p>
-                <p className="text-xl font-semibold text-blue-600">
-                  {certificateData.courseName || '[Course Name]'}
-                </p>
-                
-                {certificateData.grade && (
-                  <p className="text-lg">
-                    with a grade of <span className="font-semibold text-emerald-600">{certificateData.grade}</span>
-                  </p>
-                )}
-                
-                <div className="pt-4">
-                  <p className="text-sm text-gray-500">
-                    Date: {certificateData.completionDate || '[Completion Date]'}
-                  </p>
+              <div>
+                <span className="text-xs text-gray-500">
+                  Completion Date: {certificateData.completionDate || "[Date]"}
+                </span>
+              </div>
+              {certificateData.additionalNotes && (
+                <div className="mt-2 bg-gray-100 px-3 py-1 rounded text-xs text-gray-600 border">
+                  Notes: {certificateData.additionalNotes}
                 </div>
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>

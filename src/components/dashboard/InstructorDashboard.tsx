@@ -1,9 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { DollarSign, Users, BookOpen, TrendingUp, Plus, Eye, Edit, BarChart3 } from 'lucide-react';
+import { DollarSign, Users, BookOpen, TrendingUp, Plus, Eye, Edit, BarChart3, Delete } from 'lucide-react';
+import CourseDeleteModal from "@/components/instructor/CourseDeleteModal";
+import CourseEditForm from "@/components/instructor/CourseEditForm";
+import CourseAnalyticsModal from "@/components/instructor/CourseAnalyticsModal";
 
 interface InstructorDashboardProps {
   onQuickAction?: (action: string) => void;
@@ -20,22 +22,36 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
   const totalRevenue = courses.reduce((sum, course) => sum + course.revenue, 0);
   const totalStudents = courses.reduce((sum, course) => sum + course.students, 0);
 
-  const handleCourseView = (course: any) => {
-    console.log('Viewing course:', course);
-    // You can add more functionality here later
-    alert(`Viewing course: ${course.title}`);
-  };
+  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
+  const [editCourseId, setEditCourseId] = React.useState<number | null>(null);
+  const [analyticsCourse, setAnalyticsCourse] = React.useState<any | null>(null);
+  const [courseToDelete, setCourseToDelete] = React.useState<any | null>(null);
+  // We'll manage course updates locally for demo; in production, it should make API requests.
+  const [courseList, setCourseList] = React.useState(courses);
 
-  const handleCourseEdit = (course: any) => {
-    console.log('Editing course:', course);
-    // You can add more functionality here later
-    alert(`Editing course: ${course.title}`);
+  const handleDeleteRequest = (course: any) => {
+    setCourseToDelete(course);
+    setDeleteModalOpen(true);
   };
-
-  const handleCourseAnalytics = (course: any) => {
-    console.log('Viewing analytics for course:', course);
-    // You can add more functionality here later
-    alert(`Analytics for: ${course.title}\nStudents: ${course.students}\nRevenue: $${course.revenue}\nRating: ${course.rating}`);
+  const handleFirstConfirmation = () => {
+    setDeleteModalOpen(false);
+    setConfirmDeleteOpen(true);
+  };
+  const handleFinalDelete = () => {
+    setCourseList(courseList.filter(c => c.id !== courseToDelete.id));
+    setConfirmDeleteOpen(false);
+    setCourseToDelete(null);
+  };
+  const handleEdit = (courseId: number) => {
+    setEditCourseId(courseId);
+  };
+  const handleUpdateCourse = (updatedCourse: any) => {
+    setCourseList(courseList.map(c => c.id === updatedCourse.id ? updatedCourse : c));
+    setEditCourseId(null);
+  };
+  const handleShowAnalytics = (course: any) => {
+    setAnalyticsCourse(course);
   };
 
   return (
@@ -130,7 +146,7 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
               <CardDescription>Manage and track your course performance</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {courses.map((course) => (
+              {courseList.map((course) => (
                 <div key={course.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
                     <BookOpen className="w-8 h-8 text-white" />
@@ -162,33 +178,44 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
-                      onClick={() => handleCourseView(course)}
-                      title="View Course"
+                      aria-label="Delete"
+                      onClick={() => handleDeleteRequest(course)}
+                      title="Delete Course"
                     >
-                      <Eye className="w-4 h-4" />
+                      <Delete className="w-4 h-4" />
                     </Button>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
-                      onClick={() => handleCourseEdit(course)}
+                      aria-label="Edit"
+                      onClick={() => handleEdit(course.id)}
                       title="Edit Course"
                     >
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
-                      onClick={() => handleCourseAnalytics(course)}
-                      title="View Analytics"
+                      aria-label="Analytics"
+                      onClick={() => handleShowAnalytics(course)}
+                      title="Analytics"
                     >
                       <BarChart3 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
               ))}
+              {/* Inline Edit Form */}
+              {editCourseId && (
+                <CourseEditForm
+                  course={courseList.find((c) => c.id === editCourseId)}
+                  onCancel={() => setEditCourseId(null)}
+                  onSave={handleUpdateCourse}
+                />
+              )}
             </CardContent>
           </Card>
         </div>
@@ -259,6 +286,21 @@ const InstructorDashboard = ({ onQuickAction }: InstructorDashboardProps) => {
           </Card>
         </div>
       </div>
+      {/* Modals and Analytics */}
+      <CourseDeleteModal
+        open={deleteModalOpen}
+        confirmOpen={confirmDeleteOpen}
+        onFirstConfirm={handleFirstConfirmation}
+        onFinalDelete={handleFinalDelete}
+        onCancel={() => { setDeleteModalOpen(false); setCourseToDelete(null); }}
+        onCancelFinal={() => { setConfirmDeleteOpen(false); setCourseToDelete(null); }}
+        course={courseToDelete}
+      />
+      <CourseAnalyticsModal
+        open={!!analyticsCourse}
+        onClose={() => setAnalyticsCourse(null)}
+        course={analyticsCourse}
+      />
     </div>
   );
 };
