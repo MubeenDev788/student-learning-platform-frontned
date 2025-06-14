@@ -1,8 +1,10 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Search, Bell, User, LogOut } from 'lucide-react';
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   user?: any;
@@ -11,6 +13,7 @@ interface HeaderProps {
 }
 
 const Header = ({ user, onLogout, onSearch }: HeaderProps) => {
+  const navigate = useNavigate();
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,10 +51,20 @@ const Header = ({ user, onLogout, onSearch }: HeaderProps) => {
             
             {user && (
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
-                  </div>
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => navigate("/profile", { state: { user } })}
+                  title="Profile"
+                >
+                  <Avatar className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500">
+                    {user.profilePic ? (
+                      <AvatarImage src={user.profilePic} alt={user.name} />
+                    ) : (
+                      <AvatarFallback>
+                        <User className="w-4 h-4 text-white" />
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
                   <div className="hidden sm:block">
                     <p className="text-sm font-medium text-gray-900">{user.name}</p>
                     <p className="text-xs text-gray-500 capitalize">{user.role}</p>
