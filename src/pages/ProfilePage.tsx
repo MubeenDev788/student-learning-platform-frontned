@@ -1,8 +1,9 @@
+
 import React, { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User, Upload, Loader2, ArrowLeft, Facebook, Github, Instagram, Linkedin, Youtube } from "lucide-react";
+import { User, Upload, Loader2, Facebook, Github, Instagram, Linkedin, Youtube } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const uploadProfilePic = (file: File) =>
@@ -103,17 +104,20 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center py-12 px-2">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl flex flex-col md:flex-row overflow-hidden">
-        {/* Avatar side */}
-        <div className="bg-gradient-to-br from-blue-500 to-green-400 flex flex-col items-center justify-center p-8 md:w-1/3">
-          <div className="mb-6 relative group">
-            <Avatar className="w-32 h-32 shadow-xl border-4 border-white">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col py-8 px-2 md:px-8">
+      <div className="flex flex-col gap-8 md:flex-row md:gap-16 w-full">
+        {/* Avatar Section */}
+        <div className="flex flex-col items-center justify-center w-full md:w-1/4 pt-6 md:pt-12"
+             onDrop={handleDrop}
+             onDragOver={e => e.preventDefault()}
+        >
+          <div className="relative group mb-3">
+            <Avatar className="w-36 h-36 shadow-xl border-4 border-white bg-gray-100">
               {profilePic ? (
                 <AvatarImage src={profilePic} alt={name} />
               ) : (
                 <AvatarFallback className="bg-white">
-                  <User className="w-14 h-14 text-gray-300" />
+                  <User className="w-16 h-16 text-gray-300" />
                 </AvatarFallback>
               )}
             </Avatar>
@@ -141,23 +145,25 @@ const ProfilePage = () => {
               </div>
             )}
           </div>
-          <p className="text-white/90 font-semibold text-lg">{name}</p>
-          <p className="text-blue-100">{user.role}</p>
-          <button
-            className="mt-8 text-white bg-blue-700 px-5 py-2 rounded-full font-medium shadow-md hover:bg-blue-800 transition"
+          <p className="text-gray-900 font-semibold text-lg text-center">{name}</p>
+          <p className="text-blue-500 text-center">{role}</p>
+          <Button
+            className="mt-8 text-blue-700 bg-blue-100 hover:bg-blue-200 px-6 py-2 rounded-2xl font-medium shadow-md transition self-center"
             type="button"
             onClick={() => navigate("/")}
             title="Back to Dashboard"
+            variant="outline"
           >
             &larr; Back to Dashboard
-          </button>
+          </Button>
         </div>
 
-        {/* Details and edit side */}
+        {/* Details and edit section - expanded to wide layout */}
         <form
           id="profile-form"
           onSubmit={handleSave}
-          className="flex-1 bg-white p-10 md:p-12"
+          className="flex-1 bg-white rounded-2xl p-6 md:p-12 shadow-lg"
+          style={{ minWidth: 0, maxWidth: "100%" }}
         >
           <h1 className="text-2xl font-bold mb-2 text-gray-900">Profile Settings</h1>
           <p className="mb-5 text-gray-500">You can edit your info below.</p>
@@ -243,3 +249,4 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
