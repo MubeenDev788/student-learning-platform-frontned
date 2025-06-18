@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,8 @@ interface CourseDetailsProps {
 
 const CourseDetails = ({ course, onEnroll, onBack }: CourseDetailsProps) => {
   const [newComment, setNewComment] = useState('');
+  const [newRating, setNewRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [comments, setComments] = useState([
     {
       id: 1,
@@ -39,17 +40,30 @@ const CourseDetails = ({ course, onEnroll, onBack }: CourseDetailsProps) => {
   ]);
 
   const handleAddComment = () => {
-    if (newComment.trim()) {
+    if (newComment.trim() && newRating > 0) {
       const comment = {
         id: comments.length + 1,
         user: "Current User",
-        rating: 5,
+        rating: newRating,
         comment: newComment,
         date: "Just now"
       };
       setComments([comment, ...comments]);
       setNewComment('');
+      setNewRating(0);
     }
+  };
+
+  const handleStarClick = (rating: number) => {
+    setNewRating(rating);
+  };
+
+  const handleStarHover = (rating: number) => {
+    setHoverRating(rating);
+  };
+
+  const handleStarLeave = () => {
+    setHoverRating(0);
   };
 
   if (!course) return null;
@@ -76,6 +90,7 @@ const CourseDetails = ({ course, onEnroll, onBack }: CourseDetailsProps) => {
             </div>
             
             <CardContent className="p-8">
+              {/* Course info section - keep existing code */}
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{course.title}</h1>
                 <p className="text-lg text-gray-600 mb-4">by {course.instructor}</p>
@@ -114,7 +129,7 @@ const CourseDetails = ({ course, onEnroll, onBack }: CourseDetailsProps) => {
                 </div>
               </div>
 
-              {/* Course Description */}
+              {/* Course Description - keep existing code */}
               <div className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">About This Course</h2>
                 <p className="text-gray-600 leading-relaxed mb-4">{course.description}</p>
@@ -125,7 +140,7 @@ const CourseDetails = ({ course, onEnroll, onBack }: CourseDetailsProps) => {
                 </p>
               </div>
 
-              {/* What You'll Learn */}
+              {/* What You'll Learn - keep existing code */}
               <div className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">What You'll Learn</h2>
                 <ul className="space-y-2 text-gray-600">
@@ -159,9 +174,40 @@ const CourseDetails = ({ course, onEnroll, onBack }: CourseDetailsProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Add Comment */}
+              {/* Add Comment with Rating */}
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h3 className="font-medium text-gray-900 mb-3">Add Your Review</h3>
+                
+                {/* Star Rating Input */}
+                <div className="mb-4">
+                  <p className="text-sm text-gray-600 mb-2">Rate this course:</p>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => handleStarClick(star)}
+                        onMouseEnter={() => handleStarHover(star)}
+                        onMouseLeave={handleStarLeave}
+                        className="transition-colors hover:scale-110 transform duration-150"
+                      >
+                        <Star 
+                          className={`w-6 h-6 ${
+                            star <= (hoverRating || newRating)
+                              ? 'text-yellow-400 fill-current' 
+                              : 'text-gray-300'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                    {newRating > 0 && (
+                      <span className="ml-2 text-sm text-gray-600">
+                        {newRating} star{newRating !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
                 <Textarea
                   placeholder="Share your thoughts about this course..."
                   value={newComment}
@@ -170,14 +216,20 @@ const CourseDetails = ({ course, onEnroll, onBack }: CourseDetailsProps) => {
                 />
                 <Button 
                   onClick={handleAddComment}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                  disabled={!newComment.trim() || newRating === 0}
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-4 h-4 mr-2" />
-                  Post Comment
+                  Post Review
                 </Button>
+                {(!newComment.trim() || newRating === 0) && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Please provide both a rating and comment to submit your review.
+                  </p>
+                )}
               </div>
 
-              {/* Comments List */}
+              {/* Comments List - keep existing code */}
               <div className="space-y-4">
                 {comments.map((comment) => (
                   <div key={comment.id} className="border-b border-gray-200 pb-4 last:border-b-0">
@@ -205,7 +257,7 @@ const CourseDetails = ({ course, onEnroll, onBack }: CourseDetailsProps) => {
           </Card>
         </div>
 
-        {/* Enrollment Card */}
+        {/* Enrollment Card - keep existing code */}
         <div>
           <Card className="shadow-lg border-0 sticky top-8">
             <CardContent className="p-6">
